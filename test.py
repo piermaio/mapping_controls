@@ -12,3 +12,6 @@ for i in id_reduntant:
     sql_query = sql_query + str(i) + ', '
 sql_query = sql_query[0:-2] +')'
 print(sql_query)
+
+
+# test change
