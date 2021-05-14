@@ -12,6 +12,7 @@ from rasterstats import zonal_stats
 import geopandas as gpd
 import csv
 
+
 def db_connection():
 	try:
 		connection = psycopg2.connect(user = "pieralberto",
@@ -74,9 +75,11 @@ def db_connection():
 
 def corine_stats(burnt_areas, corine, dict_path, tab_nations):
 	ba = burnt_areas
+	# os.chdir('C:\\Users\\piermaio\\Documents\\gisdata\\jrc\\richieste\\20210505_boca_biella')
+	# ba = gpd.read_file('final_output_dissolve_2005_LAEA.shp')
 	print(ba.shape)
 	# ba = ba.merge(tab_nations, how='inner', left_on='COUNTRY', right_on='NUTS0_CODE')
-	print('--- Coulmns of burnt areas ---')
+	print('--- Columns of burnt areas ---')
 	print(ba.columns)
 	ba = ba.sort_values('id')
 	os.chdir(dict_path)
@@ -91,7 +94,7 @@ def corine_stats(burnt_areas, corine, dict_path, tab_nations):
 	df_ba_raw = pd.DataFrame.from_dict(ba_raw)
 	df_ba_raw = df_ba_raw.rename(columns=corine_dict)
 	df_ba_raw = df_ba_raw.T
-	# df_ba_raw.to_csv('corine_ba_raw.csv')
+	df_ba_raw.to_csv('corine_ba_raw.csv')
 	df_mapped = df_ba_raw.groupby(df_ba_raw.index).sum()
 	df_mapped = df_mapped.T
 	# df_mapped.to_csv('corine_ba_raw2.csv')
@@ -103,10 +106,14 @@ def corine_stats(burnt_areas, corine, dict_path, tab_nations):
 	a = ba['area_ha'].to_list()
 	df = df.assign(id=l, area=a)
 	df.to_csv('__df_test.csv')
+	cols = df.columns[:-2]
+	print(cols)
+	df[cols] = df[cols].div(df[cols].sum(axis=1), axis=0).multiply(100)
+	df.to_csv('__df_test2.csv')
 	not_natural = df[(df['Broad Leaved (clc 311)']==0)
 					 & (df['Other Natural (clc 321,322, 331-423)']==0)
 					 & (df['Transitional (clc 324)']==0)
-					 & (df['Other (clc 255, 511-995)']==0 or df['Other (clc 255, 511-995)']==None)
+					 & (df['Other (clc 255, 511-995)']==0) # or df['Other (clc 255, 511-995)']==None)
 					 & (df['Coniferous (clc 312)']==0)
 					 & (df['Sclerophyllous (clc 323)']==0)
 					 & (df['Mixed Forest (clc 313)']==0)]

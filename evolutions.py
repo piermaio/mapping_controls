@@ -1,12 +1,15 @@
 import os
 import pandas as pd
 from db_connection import db_connection
+from datetime import datetime
 
 def unwanted_copies(path):
     os.chdir(path)
     table_name = 'gw_burntarea_effis.rob_ba_evo_test'
     df, gdf = db_connection(table_name, use='r')
     print('The number of evolutions to check is {}\n'.format(gdf.shape[0]))
+    print(type(df['initialdate'][0]))
+    df['initialdate'] = df['initialdate'].apply(lambda x:x.date())
 
     # nduplicates: dataframe containing the count of the evolutions with the same ba_id, initialdate, finaldate, area_ha
     nduplicates = df.groupby(['ba_id', 'initialdate', 'finaldate', 'area_ha'])['id'].nunique().sort_values(
