@@ -1,6 +1,6 @@
 #
 # PM this script provides a list of non-wildland potentially wrong burnt areas
-#
+# update for github
 
 import os
 import pandas as pd
@@ -109,7 +109,7 @@ def corine_stats(burnt_areas, corine, dict_path, tab_nations):
 	cols = df.columns[:-2]
 	print(cols)
 	df[cols] = df[cols].div(df[cols].sum(axis=1), axis=0).multiply(100)
-	df.to_csv('__df_test2.csv')
+	# df.to_csv('__df_test2.csv')
 	not_natural = df[(df['Broad Leaved (clc 311)']==0)
 					 & (df['Other Natural (clc 321,322, 331-423)']==0)
 					 & (df['Transitional (clc 324)']==0)
